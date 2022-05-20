@@ -55,7 +55,11 @@ class App extends React.Component {
   }
 
   render() {
-    const { isButtonDisabled, loadingLogin, isLoginLoaded } = this.state;
+    const {
+      isButtonDisabled,
+      loadingLogin,
+      isLoginLoaded,
+    } = this.state;
 
     return (
       <BrowserRouter>
@@ -64,7 +68,7 @@ class App extends React.Component {
           <Route path="/profile/edit" component={ ProfileEdit } />
           <Route path="/profile" component={ Profile } />
           <Route path="/favorites" component={ Favorites } />
-          <Route path="/album" component={ Album } />
+          <Route path="/album/:id" component={ Album } />
           <Route path="/search" component={ Search } />
           <Route
             exact
@@ -77,7 +81,7 @@ class App extends React.Component {
               isLoginLoaded={ isLoginLoaded }
             />) }
           />
-          <Route component={ NotFound } />
+          <Route path="*" component={ NotFound } />
         </Switch>
       </BrowserRouter>
     );

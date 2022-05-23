@@ -15,6 +15,31 @@ class App extends React.Component {
     isButtonDisabled: true,
     loadingLogin: false,
     isLoginLoaded: false,
+    searchArtistInput: '',
+    isSearchButtonDisabled: true,
+  }
+
+  searchInputCheck = () => {
+    const { searchArtistInput } = this.state;
+    const minNameLength = 2;
+
+    if (searchArtistInput.length < minNameLength) {
+      this.setState({
+        isSearchButtonDisabled: true,
+      });
+    } else {
+      this.setState({
+        isSearchButtonDisabled: false,
+      });
+    }
+  }
+
+  onSearchInputChange = ({ target }) => {
+    const { name } = target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    this.setState(() => ({
+      [name]: value,
+    }), this.searchInputCheck);
   }
 
   inputCheck = () => {
@@ -59,6 +84,8 @@ class App extends React.Component {
       isButtonDisabled,
       loadingLogin,
       isLoginLoaded,
+      searchArtistInput,
+      isSearchButtonDisabled,
     } = this.state;
 
     return (
@@ -69,7 +96,14 @@ class App extends React.Component {
           <Route path="/profile" component={ Profile } />
           <Route path="/favorites" component={ Favorites } />
           <Route path="/album/:id" component={ Album } />
-          <Route path="/search" component={ Search } />
+          <Route
+            path="/search"
+            render={ () => (<Search
+              onSearchInputChange={ this.onSearchInputChange }
+              searchArtistInput={ searchArtistInput }
+              isSearchButtonDisabled={ isSearchButtonDisabled }
+            />) }
+          />
           <Route
             exact
             path="/"

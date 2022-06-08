@@ -8,6 +8,7 @@ import Profile from './pages/Profile';
 import ProfileEdit from './pages/ProfileEdit';
 import NotFound from './pages/NotFound';
 import { createUser } from './services/userAPI';
+import searchAlbumsAPI from './services/searchAlbumsAPI';
 
 class App extends React.Component {
   state = {
@@ -17,6 +18,34 @@ class App extends React.Component {
     isLoginLoaded: false,
     searchArtistInput: '',
     isSearchButtonDisabled: true,
+    loadingSearch: false,
+    isSearchLoaded: false,
+    searchedObjectArray: [],
+    lastSearch: '',
+    isAlbumEmpty: false,
+  }
+
+  // SEARCH FUNCS
+  onClickSearch = async () => {
+    const { searchArtistInput } = this.state;
+    const searchedArtist = searchArtistInput;
+
+    this.setState({
+      lastSearch: searchedArtist,
+      searchArtistInput: '',
+      loadingSearch: true,
+    }, async () => {
+      console.log(searchedArtist);
+      console.log(searchArtistInput);
+      const albumObjectArray = await searchAlbumsAPI(searchedArtist);
+      console.log(albumObjectArray);
+      this.setState({
+        searchedObjectArray: albumObjectArray,
+        loadingSearch: false,
+        isSearchLoaded: true,
+        isAlbumEmpty: albumObjectArray.length === 0,
+      });
+    });
   }
 
   searchInputCheck = () => {
@@ -42,6 +71,7 @@ class App extends React.Component {
     }), this.searchInputCheck);
   }
 
+  // LOGIN FUNCS
   inputCheck = () => {
     const { loginNameInput } = this.state;
     const minNameLength = 3;
@@ -86,6 +116,11 @@ class App extends React.Component {
       isLoginLoaded,
       searchArtistInput,
       isSearchButtonDisabled,
+      loadingSearch,
+      isSearchLoaded,
+      searchedObjectArray,
+      lastSearch,
+      isAlbumEmpty,
     } = this.state;
 
     return (
@@ -100,8 +135,14 @@ class App extends React.Component {
             path="/search"
             render={ () => (<Search
               onSearchInputChange={ this.onSearchInputChange }
+              onClickSearch={ this.onClickSearch }
               searchArtistInput={ searchArtistInput }
               isSearchButtonDisabled={ isSearchButtonDisabled }
+              loadingSearch={ loadingSearch }
+              isSearchLoaded={ isSearchLoaded }
+              searchedObjectArray={ searchedObjectArray }
+              lastSearch={ lastSearch }
+              isAlbumEmpty={ isAlbumEmpty }
             />) }
           />
           <Route

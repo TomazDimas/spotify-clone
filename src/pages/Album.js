@@ -2,13 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import getMusics from '../services/musicsAPI';
-// import MusicCard from '../components/MusicCard';
+import MusicCard from '../components/MusicCard';
 
 class Album extends React.Component {
   state = {
     albumList: {},
     artistName: '',
     albumName: '',
+    areAlbunsLoaded: false,
   }
 
   getAlbumList = async () => {
@@ -18,6 +19,11 @@ class Album extends React.Component {
       albumList: albumArray,
       artistName: albumArray[0].artistName,
       albumName: albumArray[0].collectionName,
+      // areAlbunsLoaded: true,
+    }, () => {
+      this.setState({
+        areAlbunsLoaded: true,
+      });
     });
   }
 
@@ -27,22 +33,23 @@ class Album extends React.Component {
 
   render() {
     // const { match: { params } } = this.props;
-    const { albumList, artistName, albumName } = this.state;
-
+    const { areAlbunsLoaded, albumList, artistName, albumName } = this.state;
     return (
       <div data-testid="page-album">
         <Header />
         <h1 data-testid="artist-name">{ artistName }</h1>
         <h2 data-testid="album-name">{ albumName }</h2>
-        { albumList }
-        {/* /* { albumList.map((music, index) => {
-          const { trackName, previewUrl } = music;
-          return (<MusicCard
-            key={ index }
-            trackName={ trackName }
-            previewUrl={ previewUrl }
+        { areAlbunsLoaded && albumList.map((music, index) => {
+          console.log('');
+          return index === 0 ? (
+            <h2>Abaixo:</h2>
+          ) : (<MusicCard
+            key={ music.trackName }
+            trackName={ music.trackName }
+            previewUrl={ music.previewUrl }
           />);
-        }) } */}
+        })}
+        )
       </div>
     );
   }

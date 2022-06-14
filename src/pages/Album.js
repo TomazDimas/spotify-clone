@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../components/MusicCard';
+import { getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 class Album extends React.Component {
   state = {
@@ -10,17 +11,18 @@ class Album extends React.Component {
     artistName: '',
     albumName: '',
     areAlbunsLoaded: false,
+    favoriteArray: [],
   }
 
   getAlbumList = async () => {
     const { match: { params: { id } } } = this.props;
     const albumArray = await getMusics(id);
-    console.log(albumArray);
+    const favorites = await getFavoriteSongs();
     this.setState({
       albumList: albumArray,
       artistName: albumArray[0].artistName,
       albumName: albumArray[0].collectionName,
-      // areAlbunsLoaded: true,
+      favoriteArray: favorites,
     }, () => {
       this.setState({
         areAlbunsLoaded: true,
@@ -28,12 +30,16 @@ class Album extends React.Component {
     });
   }
 
+  isFavorite = (music) => {
+    const { favoriteArray } = this.state;
+    return favoriteArray.find((favoriteMusic) => favoriteMusic.trackId === music.trackId);
+  }
+
   componentDidMount = () => {
     this.getAlbumList();
   }
 
   render() {
-    // const { match: { params } } = this.props;
     const { areAlbunsLoaded, albumList, artistName, albumName } = this.state;
     return (
       <div data-testid="page-album">
@@ -50,6 +56,7 @@ class Album extends React.Component {
             previewUrl={ music.previewUrl }
             trackId={ music.trackId }
             object={ music }
+            checkedValue={ this.isFavorite(music) }
           />);
         })}
         )

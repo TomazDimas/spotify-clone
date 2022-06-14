@@ -10,19 +10,30 @@ class MusicCard extends React.Component {
   }
 
   favoriteSong = async ({ target }) => {
-    const { object } = this.props;
-    console.log(object);
+    const { object, removeFavorite } = this.props;
     console.log(target.checked);
-    // target.checked = false;
-    this.setState((prev) => ({
-      isLoading: true,
-      isChecked: !prev.isChecked,
-    }), async () => {
-      await addSong(object);
-      this.setState({
-        isLoading: false,
+    if (target.checked === true) {
+      this.setState((prev) => ({
+        isLoading: true,
+        isChecked: !prev.isChecked,
+      }), async () => {
+        await addSong(object);
+        this.setState({
+          isLoading: false,
+        });
       });
-    });
+    }
+    if (target.checked === false) {
+      this.setState({
+        isLoading: true,
+      }, async () => {
+        await removeFavorite(object);
+        this.setState({
+          isChecked: false,
+          isLoading: false,
+        });
+      });
+    }
   }
 
   render() {
@@ -68,6 +79,7 @@ MusicCard.propTypes = {
     artistId: PropTypes.number,
   }).isRequired,
   checkedValue: PropTypes.bool.isRequired,
+  removeFavorite: PropTypes.func.isRequired,
 };
 
 export default MusicCard;

@@ -15,6 +15,7 @@ class Album extends React.Component {
   getAlbumList = async () => {
     const { match: { params: { id } } } = this.props;
     const albumArray = await getMusics(id);
+    console.log(albumArray);
     this.setState({
       albumList: albumArray,
       artistName: albumArray[0].artistName,
@@ -42,11 +43,13 @@ class Album extends React.Component {
         { areAlbunsLoaded && albumList.map((music, index) => {
           console.log('');
           return index === 0 ? (
-            <h2>Abaixo:</h2>
+            <h2 key="título">Abaixo:</h2>
           ) : (<MusicCard
             key={ music.trackName }
             trackName={ music.trackName }
             previewUrl={ music.previewUrl }
+            trackId={ music.trackId }
+            object={ music }
           />);
         })}
         )
